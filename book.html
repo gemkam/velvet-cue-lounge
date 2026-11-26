@@ -782,11 +782,10 @@ function populateAdvanceTimeOptions() {
   let candidate = new Date(now);
   candidate.setMinutes(0, 0, 0);
   candidate.setHours(candidate.getHours() + 1);
-  if (candidate.getHours() === 12) candidate.setHours(13);
 
   while (options.length < 8) {
     const h = candidate.getHours();
-    const isOffered = (h >= 13) || (h < 5); // 1PM-11:59PM or 12AM-4:59AM (12PM excluded)
+    const isOffered = true; // open 24 hours, every hour can be booked
     if (isOffered) {
       options.push(new Date(candidate));
     }
@@ -812,12 +811,12 @@ function onAdvanceTimeChange() {
   selectedAdvanceTime = new Date(parseInt(val, 10));
 
   const h = selectedAdvanceTime.getHours();
-  const isOffPeak = h >= 12 && h < 20;
+  const isOffPeak = h >= 5 && h < 20;
   currentShift = isOffPeak ? 'morning' : 'evening';
 
   const t = I18N[currentLang];
   const label = isOffPeak ? t.offPeakLabel : t.peakLabel;
-  const range = isOffPeak ? '12:00 PM - 08:00 PM' : '08:00 PM - 05:00 AM';
+  const range = isOffPeak ? '05:00 AM - 08:00 PM' : '08:00 PM - 05:00 AM';
   const el = document.getElementById('fixed-shift-display');
   el.innerHTML = `<span>${label}</span><span class="shift-time-range">${range}</span>`;
   el.className = 'fixed-shift-display' + (isOffPeak ? '' : ' peak');
@@ -943,12 +942,12 @@ if (sb) {
 // 8PM-5AM) is fixed by the real clock and shown as a read-only display.
 function renderFixedShiftDisplay() {
   const hour = new Date().getHours();
-  const isOffPeak = hour >= 12 && hour < 20;
+  const isOffPeak = hour >= 5 && hour < 20;
   currentShift = isOffPeak ? 'morning' : 'evening';
 
   const t = I18N[currentLang];
   const label = isOffPeak ? t.offPeakLabel : t.peakLabel;
-  const range = isOffPeak ? '12:00 PM - 08:00 PM' : '08:00 PM - 05:00 AM';
+  const range = isOffPeak ? '05:00 AM - 08:00 PM' : '08:00 PM - 05:00 AM';
 
   const el = document.getElementById('fixed-shift-display');
   el.innerHTML = `<span>${label}</span><span class="shift-time-range">${range}</span>`;
