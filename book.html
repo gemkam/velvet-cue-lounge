@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Table | Velvet Cue Lounge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --felt: #FF2E9F;
+    --charcoal: #0B0308;
+    --charcoal-2: #170811;
+    --charcoal-3: #200b17;
+    --brass: #FF2E9F;
+    --brass-bright: #CCFF00;
+    --cream: #FCE8F5;
+    --cream-dim: #C98CB0;
+    --red: #FF2E9F;
+    --red-bright: #CCFF00;
+    --green-live: #00FFC8;
+    --border-soft: rgba(255,46,159,0.22);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--charcoal);
+    color: var(--cream);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    padding: 20px 16px 60px;
+  }
+  .display { font-family: 'Chakra Petch', sans-serif; }
+  [dir="rtl"] body, [dir="rtl"] .display { font-family: 'Noto Naskh Arabic', 'Manrope', sans-serif; }
+
+  .page-wrap { max-width: 560px; margin: 0 auto; }
+
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 10px;
+  }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--cream-dim);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .all-busy-note {
+    margin-top: 8px; font-size: 12.5px; color: #ffc107;
+    background: rgba(255,193,7,0.1); border: 1px solid rgba(255,193,7,0.35);
+    border-radius: 8px; padding: 8px 10px;
+  }
+  .lang-select {
+    background: var(--charcoal-2);
+    color: var(--cream);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--cream);
+    text-shadow: 0 0 16px rgba(255,46,159,0.35);
+  }
+  .page-sub {
+    font-size: 13px;
+    color: var(--cream-dim);
+    margin-bottom: 26px;
+  }
+
+  .field-block { margin-bottom: 20px; }
+  .field-block.hidden { display: none; }
+  .field-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--brass-bright);
+    margin-bottom: 8px;
+  }
+  .custom-select {
+    position: relative;
+  }
+  select.styled-select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--charcoal-2);
+    color: var(--cream);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 14px 40px 14px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  [dir="rtl"] select.styled-select { padding: 14px 16px 14px 40px; }
+  select.styled-select:focus {
+    outline: none;
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(255,46,159,0.15);
+  }
+  select.styled-select:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .custom-select::after {
+    content: '▾';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--brass-bright);
+    pointer-events: none;
+    font-size: 13px;
+  }
+  [dir="rtl"] .custom-select::after { right: auto; left: 16px; }
+
+  .avail-note {
+    font-size: 11.5px;
+    color: var(--cream-dim);
+    margin-top: 6px;
+  }
+
+  .fixed-shift-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--charcoal-2);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+  .fixed-shift-display .shift-time-range {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--cream-dim);
+  }
+  .fixed-shift-display.peak { border-color: rgba(204,255,0,0.35); }
+
+  .booking-type-toggle {
+    display: flex;
+    gap: 8px;
+  }
+  .booking-type-btn {
+    flex: 1;
+    background: var(--charcoal-2);
+    border: 1.5px solid var(--border-soft);
+    color: var(--cream-dim);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 13px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .booking-type-btn.active {
+    background: rgba(255,46,159,0.12);
+    border-color: var(--brass);
+    color: var(--brass-bright);
+  }
+  .advance-note {
+    font-size: 12px;
+    color: var(--cream-dim);
+    line-height: 1.6;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 1px dashed var(--border-soft);
+    border-radius: 8px;
+  }
+  .advance-note b { color: var(--brass-bright); }
+
+  .price-summary {
+    background: var(--charcoal-2);
+    border: 1.5px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 24px 0;
+  }
+  .price-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px;
+    color: var(--cream-dim);
+    padding: 5px 0;
+  }
+  .price-row.total {
+    border-top: 1px solid var(--border-soft);
+    margin-top: 10px;
+    padding-top: 14px;
+  }
+  .price-row.total .price-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+  .price-row.total .price-value {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--brass-bright);
+    text-shadow: 0 0 12px var(--brass-bright);
+  }
+
+  .customer-fields {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .text-input {
+    width: 100%;
+    background: var(--charcoal-2);
+    color: var(--cream);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+  }
+  .text-input:focus {
+    outline: none;
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(255,46,159,0.15);
+  }
+  .text-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .text-input.invalid { border-color: #ff4d4d; }
+  .phone-error {
+    font-size: 11.5px;
+    color: #ff6b6b;
+    margin-top: 5px;
+    min-height: 14px;
+  }
+
+  .confirm-btn {
+    width: 100%;
+    background: var(--brass);
+    color: #fff;
+    border: none;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.4px;
+    padding: 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    box-shadow: 0 0 24px rgba(255,46,159,0.5);
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .confirm-btn:hover { background: var(--brass-bright); color: var(--charcoal); box-shadow: 0 0 30px var(--brass-bright); }
+  .confirm-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .beverages-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--cream-dim);
+    margin-top: 18px;
+    padding: 12px;
+    border: 1px dashed var(--border-soft);
+    border-radius: 10px;
+  }
+
+  /* ---- Confirmation state ---- */
+  .confirm-card {
+    display: none;
+    text-align: center;
+    padding: 20px 4px;
+  }
+  .confirm-card.show { display: block; }
+  .confirm-ring {
+    width: 74px; height: 74px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: rgba(0,255,200,0.12);
+    border: 2px solid var(--green-live);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 24px rgba(0,255,200,0.4);
+  }
+  .waiting-ring {
+    background: rgba(255,46,159,0.1);
+    border-color: var(--brass);
+    box-shadow: 0 0 24px rgba(255,46,159,0.35);
+  }
+  .waiting-ring { overflow: hidden; background: #062e1a; }
+  /* Realistic snooker break (canvas) inside the approval circle */
+  .break-canvas { width: 100%; height: 100%; display: block; border-radius: 50%; }
+  .rejected-ring {
+    background: rgba(255,107,107,0.1);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    box-shadow: 0 0 24px rgba(255,107,107,0.3);
+  }
+  .confirm-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .confirm-sub {
+    font-size: 13.5px;
+    color: var(--cream-dim);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+  .confirm-sub b { color: var(--brass-bright); }
+
+  .whatsapp-confirm-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #25D366;
+    color: #06210f;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 15.5px;
+    letter-spacing: 0.3px;
+    padding: 16px;
+    border-radius: 100px;
+    text-decoration: none;
+    box-shadow: 0 0 26px rgba(37,211,102,0.55);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+    animation: wa-pulse 2.2s ease-in-out infinite;
+  }
+  .whatsapp-confirm-btn:hover { background: #2fe377; box-shadow: 0 0 34px rgba(37,211,102,0.75); }
+  .whatsapp-confirm-btn:active { transform: scale(0.98); }
+  @keyframes wa-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(37,211,102,0.45); }
+    50% { box-shadow: 0 0 34px rgba(37,211,102,0.8); }
+  }
+  .wa-icon { width: 21px; height: 21px; flex-shrink: 0; }
+  .wa-icon svg { width: 100%; height: 100%; }
+
+  .confirm-hint {
+    font-size: 11.5px;
+    color: var(--cream-dim);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .secondary-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12.5px;
+    color: var(--cream-dim);
+    text-decoration: none;
+  }
+  .secondary-link:hover { color: var(--cream); text-decoration: underline; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<div class="page-wrap" id="page-wrap">
+
+  <div class="top-bar">
+    <a class="back-link" href="cafe-status.html" id="back-link">← <span id="txt-back">Back to live status</span></a>
+    <select class="lang-select" id="lang-picker" onchange="setLanguage(this.value)">
+      <option value="en">English</option>
+      <option value="ur">Urdu</option>
+      <option value="ar">عُماني</option>
+    </select>
+  </div>
+
+  <div class="page-title display" id="txt-title">Velvet Cue Advanced Booking</div>
+  <div class="page-sub" id="txt-subtitle">Pick your shift, game, table and duration. Price updates instantly.</div>
+
+  <div id="booking-form">
+
+    <div class="field-block">
+      <label class="field-label">Booking Type</label>
+      <div class="booking-type-toggle">
+        <button type="button" class="booking-type-btn active" id="btn-type-now" onclick="setBookingType('now')">Play Now</button>
+        <button type="button" class="booking-type-btn" id="btn-type-advance" onclick="setBookingType('advance')">Advanced Booking</button>
+      </div>
+    </div>
+
+    <div class="field-block" id="advance-time-block" style="display:none;">
+      <label class="field-label">Arrival Time</label>
+      <div class="custom-select">
+        <select class="styled-select" id="select-advance-time" onchange="onAdvanceTimeChange()">
+          <option value="">Select a time</option>
+        </select>
+      </div>
+      <div class="advance-note" id="advance-note"></div>
+    </div>
+
+    <div class="field-block" id="current-rate-block">
+      <label class="field-label" id="lbl-shift">Current Rate</label>
+      <div class="fixed-shift-display" id="fixed-shift-display"></div>
+    </div>
+
+    <div class="field-block">
+      <label class="field-label" id="lbl-category">Category / Game Area</label>
+      <div class="custom-select">
+        <select class="styled-select" id="select-category" onchange="onCategoryChange()">
+          <option value="" id="opt-cat-placeholder">Select a category</option>
+          <option value="premium-snooker" id="opt-cat-premium-snooker">Premium Snooker (2 Tables available)</option>
+          <option value="premium-billiard" id="opt-cat-premium-billiard">Premium Billiard (1 Table available)</option>
+          <option value="casual-snooker" id="opt-cat-casual-snooker">Casual Snooker (2 Tables available)</option>
+          <option value="casual-billiard" id="opt-cat-casual-billiard">Casual Billiard (2 Tables available)</option>
+          <option value="table-tennis" id="opt-cat-table-tennis">Table Tennis (1 Table available)</option>
+          <option value="ps5" id="opt-cat-ps5">PlayStation 5 (3 Consoles available)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-block">
+      <label class="field-label" id="lbl-table">Table / Console</label>
+      <div class="custom-select">
+        <select class="styled-select" id="select-table" onchange="onTableChange()" disabled>
+          <option value="" id="opt-table-placeholder">Select category first</option>
+        </select>
+        <div class="all-busy-note" id="all-busy-note" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="field-block">
+      <label class="field-label" id="lbl-duration">Play Duration</label>
+      <div class="custom-select">
+        <select class="styled-select" id="select-duration" onchange="onDurationChange()" disabled>
+          <option value="30" id="opt-dur-30">30 Minutes</option>
+          <option value="60" id="opt-dur-60">60 Minutes</option>
+          <option value="120" id="opt-dur-120">120 Minutes</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="price-summary">
+      <div class="price-row">
+        <span id="sum-lbl-category">Category</span>
+        <span id="sum-val-category">-</span>
+      </div>
+      <div class="price-row">
+        <span id="sum-lbl-table">Table</span>
+        <span id="sum-val-table">-</span>
+      </div>
+      <div class="price-row">
+        <span id="sum-lbl-duration">Duration</span>
+        <span id="sum-val-duration">-</span>
+      </div>
+      <div class="price-row total">
+        <span class="price-label" id="sum-lbl-total">Total</span>
+        <span class="price-value" id="sum-val-total">0.000 OMR</span>
+      </div>
+    </div>
+
+    <div class="customer-fields">
+      <input class="text-input" type="text" id="input-name" placeholder="Your name" disabled>
+      <div>
+        <input class="text-input" type="tel" id="input-phone" placeholder="+968 9XXX XXXX" oninput="onPhoneInput()" disabled>
+        <div class="phone-error" id="phone-error"></div>
+      </div>
+    </div>
+
+    <button class="confirm-btn" id="confirm-btn" onclick="submitBooking()" disabled>Let's Play</button>
+
+    <div class="beverages-note" id="txt-beverages-note">Beverages &amp; snacks menu will be added at the counter.</div>
+  </div>
+
+  <div class="confirm-card" id="confirm-card">
+
+    <div id="waiting-state">
+      <div class="confirm-ring waiting-ring">
+        <canvas class="break-canvas" id="break-canvas" aria-hidden="true"></canvas>
+      </div>
+      <div class="confirm-title display" id="txt-waiting-title">Getting approval...</div>
+      <div class="confirm-sub" id="waiting-sub-text"></div>
+      <div class="confirm-hint" id="txt-waiting-hint">Hang tight, our team at the counter is confirming your table. This page will update automatically.</div>
+    </div>
+
+    <div id="approved-state" style="display:none;">
+      <div class="confirm-ring">✓</div>
+      <div class="confirm-title display" id="txt-confirm-title">Table confirmed!</div>
+      <div class="confirm-sub" id="confirm-sub-text"></div>
+      <a class="whatsapp-confirm-btn" id="whatsapp-confirm-btn" href="#" target="_blank" rel="noopener">
+        <span class="wa-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.87.52 3.62 1.42 5.12L2 22l5.13-1.5a9.87 9.87 0 0 0 4.9 1.31h.01c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2Zm5.79 14.02c-.24.68-1.4 1.3-1.93 1.35-.5.05-.99.21-3.33-.7-2.82-1.11-4.62-4.05-4.76-4.24-.14-.19-1.13-1.51-1.13-2.88s.71-2.05.96-2.33c.24-.28.54-.35.72-.35h.52c.17 0 .39-.03.6.46.24.56.81 1.93.88 2.08.07.14.11.31.02.5-.09.19-.14.3-.28.46-.14.16-.29.36-.42.48-.14.14-.29.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.97 1.25 2.25 1.39.28.14.44.12.6-.07.16-.19.68-.79.86-1.07.18-.28.36-.23.6-.14.24.09 1.55.73 1.82.86.27.14.44.2.51.31.07.12.07.68-.17 1.36Z"/></svg>
+        </span>
+        <span id="txt-whatsapp-btn">Confirm on WhatsApp</span>
+      </a>
+      <div class="confirm-hint" id="txt-confirm-hint">Tap to send us a quick message, our team will lock in your table.</div>
+    </div>
+
+    <div id="rejected-state" style="display:none;">
+      <div class="confirm-ring rejected-ring">✕</div>
+      <div class="confirm-title display" id="txt-rejected-title">Not available right now</div>
+      <div class="confirm-sub" id="rejected-sub-text"></div>
+    </div>
+
+    <a class="secondary-link" href="cafe-status.html" id="txt-confirm-btn">Back to live status</a>
+  </div>
+
+</div>
+
+<script>
+
+// ---- Supabase connection ----
+// Wrapped in try/catch: if the Supabase library fails to load (CDN blocked, offline, etc.),
+// the rest of this script (language switching, pricing display, form validation) must still
+// work. Only the actual database write in submitBooking() needs `sb` to exist.
+const SUPABASE_URL = 'https://iphrtorfnlzcatgrpdzt.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwaHJ0b3Jmbmx6Y2F0Z3JwZHp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2MzYwMjksImV4cCI6MjExMTIxMjAyOX0.CBl2bTiGyFpe4MSLvBjvwkTm3ry1Rl5MZAEw8YUvjc0';
+let sb = null;
+try {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch (e) {
+  console.error('Supabase failed to initialize, booking submission will not work until this is resolved:', e);
+}
+
+// =====================================================================
+// PRICING ENGINE
+// Structure: PRICING[category][shift] = { 30: x, 60: y, 120: z }
+// table-tennis and ps5 are flat all-day rates (shift ignored for price)
+// =====================================================================
+const PRICING = {
+  'premium-snooker': {
+    morning: { 30: 0.800, 60: 1.500, 120: 5.000 },
+    evening: { 30: 1.500, 60: 3.000, 120: 6.000 }
+  },
+  'premium-billiard': {
+    morning: { 30: 0.800, 60: 1.500, 120: 5.000 },
+    evening: { 30: 1.500, 60: 3.000, 120: 6.000 }
+  },
+  'casual-snooker': {
+    morning: { 30: 0.750, 60: 1.500, 120: 3.000 },
+    evening: { 30: 1.300, 60: 2.500, 120: 5.000 }
+  },
+  'casual-billiard': {
+    morning: { 30: 0.750, 60: 1.500, 120: 3.000 },
+    evening: { 30: 1.300, 60: 2.500, 120: 5.000 }
+  },
+  'table-tennis': {
+    morning: { 30: 0.750, 60: 1.500, 120: 3.000 },
+    evening: { 30: 1.000, 60: 2.000, 120: 4.000 }
+  },
+  'ps5': {
+    morning: { 30: 0.750, 60: 1.500, 120: 3.000 },
+    evening: { 30: 1.500, 60: 3.000, 120: 6.000 }
+  }
+};
+
+// Prices edited in the dashboard Settings override the defaults above
+(async function loadSavedPrices() {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb.from('cafe_settings').select('value').eq('key', 'prices').maybeSingle();
+    if (error || !data || !data.value) return;
+    for (const cat in data.value) if (PRICING[cat]) PRICING[cat] = data.value[cat];
+    // Off-peak (12PM-8PM): casual snooker/billiard, table tennis and PS5 = 1.500 OMR per hour.
+    // Applied over older saved prices until staff save prices again in Settings.
+    if (!data.value._offpeak15) ['casual-snooker','casual-billiard','table-tennis','ps5'].forEach(c => { if (PRICING[c]) PRICING[c].morning = { 30: 0.750, 60: 1.500, 120: 3.000 }; });
+    if (typeof updateSummary === 'function') updateSummary();
+  } catch (e) {}
+})();
+
+// Table/console counts per category, used to populate Dropdown 3
+const TABLE_COUNTS = {
+  'premium-snooker': 2,
+  'premium-billiard': 1,
+  'casual-snooker': 2,
+  'casual-billiard': 2,
+  'table-tennis': 1,
+  'ps5': 3
+};
+
+// =====================================================================
+// I18N STRINGS
+// ur = Roman Urdu (Latin script), ar = Omani Arabic (Arabic script, RTL)
+// =====================================================================
+const I18N = {
+  en: {
+    dir: 'ltr',
+    back: 'Back to live status',
+    title: 'Velvet Cue Advanced Booking',
+    subtitle: 'Pick your shift, game, table and duration. Price updates instantly.',
+    lblShift: 'Time Slot',
+    offPeakLabel: 'Off-Peak Rate',
+    peakLabel: 'Peak Rate',
+    lblCategory: 'Category / Game Area',
+    optCatPlaceholder: 'Select a category',
+    optCatPremiumSnooker: 'Premium Snooker (2 Tables available)',
+    optCatPremiumBilliard: 'Premium Billiard (1 Table available)',
+    optCatCasualSnooker: 'Casual Snooker (2 Tables available)',
+    optCatCasualBilliard: 'Casual Billiard (2 Tables available)',
+    optCatTableTennis: 'Table Tennis (1 Table available)',
+    optCatPs5: 'PlayStation 5 (3 Consoles available)',
+    lblTable: 'Table / Console',
+    optTablePlaceholder: 'Select category first',
+    lblDuration: 'Play Duration',
+    optDur30: '30 Minutes',
+    optDur60: '60 Minutes',
+    optDur120: '120 Minutes',
+    sumLblCategory: 'Category',
+    sumLblTable: 'Table',
+    sumLblDuration: 'Duration',
+    sumLblTotal: 'Total',
+    namePlaceholder: 'Your name',
+    phonePlaceholder: '+968 9XXX XXXX',
+    phoneErrorText: 'Enter a valid 8-digit Oman mobile number.',
+    confirmBtn: "Let's Play",
+    beveragesNote: 'Beverages & snacks menu will be added at the counter.',
+    confirmTitle: 'Request sent',
+    confirmSubTemplate: 'Your {table} ({category}) is reserved for {duration} minutes.<br>Total: <b>{total} OMR</b>. Head to the counter, staff will confirm and start your session.',
+    whatsappBtn: 'Confirm on WhatsApp',
+    confirmHint: 'Tap to send us a quick message, our team will lock in your table.',
+    whatsappMessageTemplate: 'Hi, I\'d like to confirm my booking at Velvet Cue Lounge.\n\nName: {name}\nTable: {table} ({category})\nDuration: {duration} minutes\nTotal: {total} OMR',
+    waitingTitle: 'Getting approval...',
+    waitingSubTemplate: 'Your request for {table} ({category}) has been sent to the counter.',
+    waitingHint: 'Hang tight, our team at the counter is confirming your table. This page will update automatically.',
+    rejectedTitle: 'Not available right now',
+    rejectedSubText: 'Sorry, that table could not be confirmed. Please go back and try another table, or check with staff at the counter.',
+    dash: '-',
+    genericTable: 'Table',
+    busyTag: 'busy',
+    allBusy: 'Is category ke saare tables abhi busy hain. Koi aur game chunain ya thori dair baad try karain.',
+    tableTaken: 'Maazrat, yeh table abhi abhi book ho gaya. Koi aur table chunain.',
+    busyTag: 'busy',
+    allBusy: 'All tables in this category are busy right now. Please pick another game or try again in a few minutes.',
+    tableTaken: 'Sorry, this table was just taken. Please choose another one.',
+    genericConsole: 'Screen'
+  },
+  ur: {
+    dir: 'ltr',
+    back: 'Live Status pe wapis jayen',
+    title: 'Velvet Cue Advanced Booking',
+    subtitle: 'Apna shift, game, table aur waqt chunain. Price foran update hogi.',
+    lblShift: 'Time choose karain',
+    offPeakLabel: 'Off-Peak Rate',
+    peakLabel: 'Peak Rate',
+    lblCategory: 'Category / Khel Ka Area',
+    optCatPlaceholder: 'Category chunain',
+    optCatPremiumSnooker: 'Premium Snooker (2 Tables available)',
+    optCatPremiumBilliard: 'Premium Billiard (1 Table available)',
+    optCatCasualSnooker: 'Casual Snooker (2 Tables available)',
+    optCatCasualBilliard: 'Casual Billiard (2 Tables available)',
+    optCatTableTennis: 'Table Tennis (1 Table available)',
+    optCatPs5: 'PlayStation 5 (3 Consoles available)',
+    lblTable: 'Table / Console',
+    optTablePlaceholder: 'Pehle category chunain',
+    lblDuration: 'Khelne Ka Waqt',
+    optDur30: '30 Minute',
+    optDur60: '60 Minute',
+    optDur120: '120 Minute',
+    sumLblCategory: 'Category',
+    sumLblTable: 'Table',
+    sumLblDuration: 'Waqt',
+    sumLblTotal: 'Total',
+    namePlaceholder: 'Aap ka naam',
+    phonePlaceholder: '+968 9XXX XXXX',
+    phoneErrorText: 'Sahi 8 digit ka Oman mobile number darj karain.',
+    confirmBtn: "Let's Play",
+    beveragesNote: 'Beverages aur snacks ka menu counter par mil jayega.',
+    confirmTitle: 'Request bhej di gayi',
+    confirmSubTemplate: 'Aap ka {table} ({category}) {duration} minute ke liye reserve ho gaya hai.<br>Total: <b>{total} OMR</b>. Counter par tashreef le jayen, staff confirm kar ke session start kar dega.',
+    whatsappBtn: 'WhatsApp par Confirm Karein',
+    confirmHint: 'Ek short message bhejain, hamari team aap ka table lock kar degi.',
+    whatsappMessageTemplate: 'Hi, main Velvet Cue Lounge mein apni booking confirm karna chahta hoon.\n\nNaam: {name}\nTable: {table} ({category})\nWaqt: {duration} minute\nTotal: {total} OMR',
+    waitingTitle: 'Approval mil rahi hai...',
+    waitingSubTemplate: 'Aap ki {table} ({category}) ki request counter ko bhej di gayi hai.',
+    waitingHint: 'Thora sabar karain, hamari team counter par aap ka table confirm kar rahi hai. Yeh page khud ba khud update ho jayega.',
+    rejectedTitle: 'Abhi available nahi hai',
+    rejectedSubText: 'Maazrat, yeh table confirm nahi ho saka. Wapis jayen aur doosra table try karain, ya counter par staff se baat karain.',
+    dash: '-',
+    genericTable: 'Table',
+    genericConsole: 'Screen'
+  },
+  ar: {
+    dir: 'rtl',
+    back: 'العودة إلى الحالة المباشرة',
+    title: 'حجز متقدم - فيلفت كيو',
+    subtitle: 'اختر الفترة واللعبة والطاولة والمدة. يتم تحديث السعر فوراً.',
+    lblShift: 'الفترة الزمنية',
+    offPeakLabel: 'سعر خارج الذروة',
+    peakLabel: 'سعر الذروة',
+    lblCategory: 'الفئة / منطقة اللعب',
+    optCatPlaceholder: 'اختر الفئة',
+    optCatPremiumSnooker: 'سنوكر مميز (طاولتان متاحتان)',
+    optCatPremiumBilliard: 'بلياردو مميز (طاولة واحدة متاحة)',
+    optCatCasualSnooker: 'سنوكر عادي (طاولتان متاحتان)',
+    optCatCasualBilliard: 'بلياردو عادي (طاولتان متاحتان)',
+    optCatTableTennis: 'تنس الطاولة (طاولة واحدة متاحة)',
+    optCatPs5: 'بلايستيشن 5 (3 أجهزة متاحة)',
+    lblTable: 'الطاولة / الجهاز',
+    optTablePlaceholder: 'اختر الفئة أولاً',
+    lblDuration: 'مدة اللعب',
+    optDur30: '30 دقيقة',
+    optDur60: '60 دقيقة',
+    optDur120: '120 دقيقة',
+    sumLblCategory: 'الفئة',
+    sumLblTable: 'الطاولة',
+    sumLblDuration: 'المدة',
+    sumLblTotal: 'الإجمالي',
+    namePlaceholder: 'اسمك',
+    phonePlaceholder: '+968 9XXX XXXX',
+    phoneErrorText: 'الرجاء إدخال رقم هاتف عماني صحيح مكون من 8 أرقام.',
+    confirmBtn: 'لنلعب',
+    beveragesNote: 'قائمة المشروبات والوجبات الخفيفة ستُضاف عند الكاونتر.',
+    confirmTitle: 'تم إرسال الطلب',
+    confirmSubTemplate: 'تم حجز {table} ({category}) لمدة {duration} دقيقة.<br>الإجمالي: <b>{total} ريال عماني</b>. توجه إلى الكاونتر، سيقوم الموظف بالتأكيد وبدء الجلسة.',
+    whatsappBtn: 'تأكيد عبر واتساب',
+    confirmHint: 'اضغط لإرسال رسالة سريعة، سيقوم فريقنا بتأكيد حجز طاولتك.',
+    whatsappMessageTemplate: 'مرحباً، أود تأكيد حجزي في فيلفت كيو لاونج.\n\nالاسم: {name}\nالطاولة: {table} ({category})\nالمدة: {duration} دقيقة\nالإجمالي: {total} ريال عماني',
+    waitingTitle: 'جاري الحصول على الموافقة...',
+    waitingSubTemplate: 'تم إرسال طلبك لـ {table} ({category}) إلى الكاونتر.',
+    waitingHint: 'يرجى الانتظار، يقوم فريقنا في الكاونتر بتأكيد طاولتك الآن. ستتحدث هذه الصفحة تلقائياً.',
+    rejectedTitle: 'غير متاحة حالياً',
+    rejectedSubText: 'عذراً، لم نتمكن من تأكيد هذه الطاولة. يرجى العودة واختيار طاولة أخرى، أو التحدث مع الموظف في الكاونتر.',
+    dash: '-',
+    genericTable: 'طاولة',
+    busyTag: 'مشغولة',
+    allBusy: 'كل الطاولات في هذه الفئة مشغولة الحين. اختر لعبة ثانية أو جرّب بعد دقائق.',
+    tableTaken: 'عذراً، هذه الطاولة انحجزت الحين. اختر طاولة ثانية.',
+    genericConsole: 'شاشة'
+  }
+};
+
+const CATEGORY_LABEL_KEY = {
+  'premium-snooker': 'optCatPremiumSnooker',
+  'premium-billiard': 'optCatPremiumBilliard',
+  'casual-snooker': 'optCatCasualSnooker',
+  'casual-billiard': 'optCatCasualBilliard',
+  'table-tennis': 'optCatTableTennis',
+  'ps5': 'optCatPs5'
+};
+
+let currentLang = 'en';
+let currentShift = '';
+let currentCategory = '';
+let currentTable = '';
+let currentDuration = '30';
+let bookingType = 'now'; // 'now' | 'advance'
+let selectedAdvanceTime = null; // Date object for the chosen future slot
+
+function setBookingType(type) {
+  bookingType = type;
+  document.getElementById('btn-type-now').classList.toggle('active', type === 'now');
+  document.getElementById('btn-type-advance').classList.toggle('active', type === 'advance');
+  document.getElementById('advance-time-block').style.display = type === 'advance' ? 'block' : 'none';
+  if (currentCategory) populateTableDropdown();   // busy tables are only blocked for Play Now
+
+  if (type === 'advance') {
+    populateAdvanceTimeOptions();
+    // The rate shown should reflect the chosen future time, not right now, until a time is picked
+    document.getElementById('fixed-shift-display').innerHTML = '<span style="color:var(--cream-dim);font-weight:500;">Pick an arrival time to see the rate</span>';
+    selectedAdvanceTime = null;
+  } else {
+    selectedAdvanceTime = null;
+    renderFixedShiftDisplay();
+  }
+  updateSummary();
+}
+
+function populateAdvanceTimeOptions() {
+  const sel = document.getElementById('select-advance-time');
+  const now = new Date();
+  const options = [];
+
+  // Offer the next 8 hourly slots that fall within business hours. Advance booking
+  // starts no earlier than 1PM, since booking "in advance" for the 12PM opening
+  // moment itself isn't really advance, that's just "now" at opening time.
+  let candidate = new Date(now);
+  candidate.setMinutes(0, 0, 0);
+  candidate.setHours(candidate.getHours() + 1);
+  if (candidate.getHours() === 12) candidate.setHours(13);
+
+  while (options.length < 8) {
+    const h = candidate.getHours();
+    const isOffered = (h >= 13) || (h < 5); // 1PM-11:59PM or 12AM-4:59AM (12PM excluded)
+    if (isOffered) {
+      options.push(new Date(candidate));
+    }
+    candidate = new Date(candidate.getTime() + 60 * 60000);
+  }
+
+  sel.innerHTML = '<option value="">Select a time</option>' + options.map(d => {
+    const label = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const dayLabel = d.getDate() !== now.getDate() ? ' (tomorrow)' : '';
+    return `<option value="${d.getTime()}">${label}${dayLabel}</option>`;
+  }).join('');
+}
+
+function onAdvanceTimeChange() {
+  const val = document.getElementById('select-advance-time').value;
+  if (!val) {
+    selectedAdvanceTime = null;
+    document.getElementById('advance-note').textContent = '';
+    document.getElementById('fixed-shift-display').innerHTML = '<span style="color:var(--cream-dim);font-weight:500;">Pick an arrival time to see the rate</span>';
+    updateSummary();
+    return;
+  }
+  selectedAdvanceTime = new Date(parseInt(val, 10));
+
+  const h = selectedAdvanceTime.getHours();
+  const isOffPeak = h >= 12 && h < 20;
+  currentShift = isOffPeak ? 'morning' : 'evening';
+
+  const t = I18N[currentLang];
+  const label = isOffPeak ? t.offPeakLabel : t.peakLabel;
+  const range = isOffPeak ? '12:00 PM - 08:00 PM' : '08:00 PM - 05:00 AM';
+  const el = document.getElementById('fixed-shift-display');
+  el.innerHTML = `<span>${label}</span><span class="shift-time-range">${range}</span>`;
+  el.className = 'fixed-shift-display' + (isOffPeak ? '' : ' peak');
+
+  const windowStart = new Date(selectedAdvanceTime.getTime() - 10 * 60000);
+  const windowEnd = new Date(selectedAdvanceTime.getTime() + 5 * 60000);
+  const fmt = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('advance-note').innerHTML =
+    `Please arrive between <b>${fmt(windowStart)}</b> and <b>${fmt(windowEnd)}</b>. If you haven't arrived by ${fmt(windowEnd)}, this booking will be automatically cancelled.`;
+
+  updateSummary();
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  try { localStorage.setItem('snookerLang', lang); } catch (e) {}
+  const t = I18N[lang];
+  document.getElementById('page-wrap').setAttribute('dir', t.dir);
+  document.documentElement.setAttribute('lang', lang === 'ar' ? 'ar' : 'en');
+
+  document.getElementById('txt-back').textContent = t.back;
+  document.getElementById('txt-title').textContent = t.title;
+  document.getElementById('txt-subtitle').textContent = t.subtitle;
+
+  document.getElementById('lbl-shift').textContent = t.lblShift;
+  renderFixedShiftDisplay();
+
+  document.getElementById('lbl-category').textContent = t.lblCategory;
+  document.getElementById('opt-cat-placeholder').textContent = t.optCatPlaceholder;
+  document.getElementById('opt-cat-premium-snooker').textContent = t.optCatPremiumSnooker;
+  document.getElementById('opt-cat-premium-billiard').textContent = t.optCatPremiumBilliard;
+  document.getElementById('opt-cat-casual-snooker').textContent = t.optCatCasualSnooker;
+  document.getElementById('opt-cat-casual-billiard').textContent = t.optCatCasualBilliard;
+  document.getElementById('opt-cat-table-tennis').textContent = t.optCatTableTennis;
+  document.getElementById('opt-cat-ps5').textContent = t.optCatPs5;
+
+  document.getElementById('lbl-table').textContent = t.lblTable;
+
+  document.getElementById('lbl-duration').textContent = t.lblDuration;
+  document.getElementById('opt-dur-30').textContent = t.optDur30;
+  document.getElementById('opt-dur-60').textContent = t.optDur60;
+  document.getElementById('opt-dur-120').textContent = t.optDur120;
+
+  document.getElementById('sum-lbl-category').textContent = t.sumLblCategory;
+  document.getElementById('sum-lbl-table').textContent = t.sumLblTable;
+  document.getElementById('sum-lbl-duration').textContent = t.sumLblDuration;
+  document.getElementById('sum-lbl-total').textContent = t.sumLblTotal;
+
+  document.getElementById('input-name').placeholder = t.namePlaceholder;
+  document.getElementById('input-phone').placeholder = t.phonePlaceholder;
+  document.getElementById('confirm-btn').textContent = t.confirmBtn;
+  document.getElementById('txt-beverages-note').textContent = t.beveragesNote;
+  document.getElementById('txt-confirm-title').textContent = t.confirmTitle;
+  document.getElementById('txt-confirm-btn').textContent = t.back;
+  document.getElementById('txt-whatsapp-btn').textContent = t.whatsappBtn;
+  document.getElementById('txt-confirm-hint').textContent = t.confirmHint;
+  document.getElementById('txt-waiting-title').textContent = t.waitingTitle;
+  document.getElementById('txt-waiting-hint').textContent = t.waitingHint;
+  document.getElementById('txt-rejected-title').textContent = t.rejectedTitle;
+
+  populateTableDropdown();
+  updateSummary();
+}
+
+function tableOptionLabel(category, index) {
+  const t = I18N[currentLang];
+  if (category === 'ps5') return `PS5 ${t.genericConsole} ${index}`;
+  return `${t.genericTable} ${index}`;
+}
+
+function populateTableDropdown() {
+  const sel = document.getElementById('select-table');
+  const t = I18N[currentLang];
+  if (!currentCategory) {
+    sel.innerHTML = `<option value="">${t.optTablePlaceholder}</option>`;
+    sel.disabled = true;
+    return;
+  }
+  const count = TABLE_COUNTS[currentCategory];
+  const blockBusy = bookingType === 'now';        // advance bookings are for later, so busy-now doesn't matter
+  // if the table picked earlier has since become busy, clear it
+  if (blockBusy && currentTable && isTableBusy(currentCategory, currentTable)) {
+    currentTable = '';
+    lockFieldsFrom('duration');
+  }
+  let html = `<option value="">${t.optTablePlaceholder}</option>`;
+  let freeCount = 0;
+  for (let i = 1; i <= count; i++) {
+    const label = tableOptionLabel(currentCategory, i);
+    const busy = blockBusy && isTableBusy(currentCategory, i);
+    if (!busy) freeCount++;
+    const selected = (!busy && String(i) === currentTable) ? 'selected' : '';
+    html += `<option value="${i}" ${selected} ${busy ? 'disabled' : ''}>${label}${busy ? ' (' + t.busyTag + ')' : ''}</option>`;
+  }
+  sel.innerHTML = html;
+  sel.disabled = false;
+  const note = document.getElementById('all-busy-note');
+  if (note) {
+    note.textContent = blockBusy && freeCount === 0 ? t.allBusy : '';
+    note.style.display = blockBusy && freeCount === 0 ? 'block' : 'none';
+  }
+}
+
+// ---- Live table status: busy tables can't be picked for "Play Now" ----
+let busyTables = new Set();          // "category:number"
+function isTableBusy(category, number) { return busyTables.has(`${category}:${number}`); }
+async function loadBusyTables() {
+  if (!sb) return;
+  const { data, error } = await sb.from('table_status').select('category, table_number, is_busy');
+  if (error || !data) return;
+  busyTables = new Set(data.filter(r => r.is_busy).map(r => `${r.category}:${r.table_number}`));
+  if (currentCategory) { populateTableDropdown(); updateSummary(); }
+}
+loadBusyTables();
+setInterval(loadBusyTables, 15000);
+if (sb) {
+  sb.channel('book-table-status')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'table_status' }, loadBusyTables)
+    .subscribe();
+}
+
+// Time Slot is no longer a user choice. The rate (Off-Peak 12PM-8PM / Peak
+// 8PM-5AM) is fixed by the real clock and shown as a read-only display.
+function renderFixedShiftDisplay() {
+  const hour = new Date().getHours();
+  const isOffPeak = hour >= 12 && hour < 20;
+  currentShift = isOffPeak ? 'morning' : 'evening';
+
+  const t = I18N[currentLang];
+  const label = isOffPeak ? t.offPeakLabel : t.peakLabel;
+  const range = isOffPeak ? '12:00 PM - 08:00 PM' : '08:00 PM - 05:00 AM';
+
+  const el = document.getElementById('fixed-shift-display');
+  el.innerHTML = `<span>${label}</span><span class="shift-time-range">${range}</span>`;
+  el.className = 'fixed-shift-display' + (isOffPeak ? '' : ' peak');
+
+  updateSummary();
+}
+
+function onCategoryChange() {
+  currentCategory = document.getElementById('select-category').value;
+  currentTable = '';
+  populateTableDropdown();
+  if (!currentCategory) lockFieldsFrom('table');
+  updateSummary();
+}
+
+function onTableChange() {
+  currentTable = document.getElementById('select-table').value;
+  document.getElementById('select-duration').disabled = !currentTable;
+  if (!currentTable) {
+    lockFieldsFrom('duration');
+  } else {
+    // Duration dropdown already has a default value (30 Minutes) selected in the HTML,
+    // so its own onchange won't fire unless the user picks a different option manually.
+    // Run the duration-ready logic immediately once it's unlocked, using that default.
+    currentDuration = document.getElementById('select-duration').value;
+    const ready = !!(currentShift && currentCategory && currentTable && currentDuration);
+    document.getElementById('input-name').disabled = !ready;
+    document.getElementById('input-phone').disabled = !ready;
+  }
+  updateSummary();
+}
+
+function onDurationChange() {
+  currentDuration = document.getElementById('select-duration').value;
+  const ready = !!(currentShift && currentCategory && currentTable && currentDuration);
+  document.getElementById('input-name').disabled = !ready;
+  document.getElementById('input-phone').disabled = !ready;
+  updateSummary();
+}
+
+// Disables every field from a given step onward, used when an earlier step gets cleared
+function lockFieldsFrom(step) {
+  const order = ['table', 'duration', 'contact'];
+  const idx = order.indexOf(step);
+  if (idx <= order.indexOf('table')) document.getElementById('select-table').disabled = true;
+  if (idx <= order.indexOf('duration')) {
+    document.getElementById('select-duration').disabled = true;
+    document.getElementById('select-duration').value = '30';
+    currentDuration = '30';
+  }
+  document.getElementById('input-name').disabled = true;
+  document.getElementById('input-phone').disabled = true;
+}
+
+function getPrice() {
+  if (!currentCategory || !currentShift) return null;
+  const cfg = PRICING[currentCategory];
+  if (!cfg) return null;
+  const shiftRates = cfg[currentShift];
+  if (!shiftRates) return null;
+  return shiftRates[currentDuration];
+}
+
+function updateSummary() {
+  const t = I18N[currentLang];
+  const catKey = CATEGORY_LABEL_KEY[currentCategory];
+  document.getElementById('sum-val-category').textContent = catKey ? t[catKey].replace(/\s*\(.*\)$/, '') : t.dash;
+  document.getElementById('sum-val-table').textContent = (currentCategory && currentTable) ? tableOptionLabel(currentCategory, currentTable) : t.dash;
+
+  const durLabelMap = { '30': t.optDur30, '60': t.optDur60, '120': t.optDur120 };
+  document.getElementById('sum-val-duration').textContent = durLabelMap[currentDuration] || t.dash;
+
+  const price = getPrice();
+  const totalEl = document.getElementById('sum-val-total');
+  const confirmBtn = document.getElementById('confirm-btn');
+
+  if (price !== null && price !== undefined) {
+    totalEl.textContent = price.toFixed(3) + ' OMR';
+    confirmBtn.disabled = !(currentShift && currentCategory && currentTable && currentDuration);
+  } else {
+    totalEl.textContent = '0.000 OMR';
+    confirmBtn.disabled = true;
+  }
+}
+
+// ---- Oman mobile number: always +968 followed by exactly 8 digits ----
+function onPhoneInput() {
+  const input = document.getElementById('input-phone');
+  let digits = input.value.replace(/\D/g, '');
+  // Strip a leading 968 if the user typed the country code digits themselves
+  if (digits.startsWith('968')) digits = digits.slice(3);
+  digits = digits.slice(0, 8);
+  input.value = digits.length ? '+968 ' + digits : '';
+  validatePhone();
+}
+
+function validatePhone() {
+  const input = document.getElementById('input-phone');
+  const errorEl = document.getElementById('phone-error');
+  const t = I18N[currentLang];
+  const digits = input.value.replace(/\D/g, '').replace(/^968/, '');
+  if (digits.length === 0) {
+    input.classList.remove('invalid');
+    errorEl.textContent = '';
+    return false;
+  }
+  if (digits.length !== 8) {
+    input.classList.add('invalid');
+    errorEl.textContent = t.phoneErrorText;
+    return false;
+  }
+  input.classList.remove('invalid');
+  errorEl.textContent = '';
+  return true;
+}
+
+async function submitBooking() {
+  if (!sb) {
+    alert('Connection error: booking cannot be submitted right now. Please try again in a moment, or contact the counter directly.');
+    return;
+  }
+  if (bookingType === 'advance' && !selectedAdvanceTime) {
+    document.getElementById('select-advance-time').focus();
+    return;
+  }
+  const price = getPrice();
+  if (price === null || price === undefined) return;
+  if (!validatePhone() || document.getElementById('input-phone').value.trim() === '') {
+    document.getElementById('input-phone').classList.add('invalid');
+    document.getElementById('phone-error').textContent = I18N[currentLang].phoneErrorText;
+    document.getElementById('input-phone').focus();
+    return;
+  }
+
+  const name = document.getElementById('input-name').value.trim();
+  const phone = document.getElementById('input-phone').value.trim();
+  if (!name) {
+    document.getElementById('input-name').focus();
+    return;
+  }
+
+  const confirmBtn = document.getElementById('confirm-btn');
+  const originalBtnText = confirmBtn.textContent;
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = '...';
+
+  // Final check right before saving: someone may have taken the table in the last few seconds
+  if (bookingType === 'now') {
+    const { data: ts } = await sb.from('table_status').select('is_busy').eq('category', currentCategory).eq('table_number', parseInt(currentTable, 10)).maybeSingle();
+    if (ts && ts.is_busy) {
+      await loadBusyTables();
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = originalBtnText;
+      alert(I18N[currentLang].tableTaken);
+      return;
+    }
+  }
+
+  const isAdvance = bookingType === 'advance';
+  const scheduledFor = isAdvance ? selectedAdvanceTime.toISOString() : null;
+  const arrivalWindowStart = isAdvance ? new Date(selectedAdvanceTime.getTime() - 10 * 60000).toISOString() : null;
+  const arrivalWindowEnd = isAdvance ? new Date(selectedAdvanceTime.getTime() + 5 * 60000).toISOString() : null;
+
+  // ---- Write the booking to Supabase as 'pending'. Table stays free until staff approves. ----
+  // Generate the ID client-side and skip .select() entirely, so this insert needs
+  // no SELECT permission on bookings (which is now staff-only, protecting every
+  // customer's name/phone from being readable by anyone holding the public anon key).
+  const newBookingId = crypto.randomUUID();
+  const { error: insertError } = await sb
+    .from('bookings')
+    .insert({
+      id: newBookingId,
+      customer_name: name,
+      customer_phone: phone,
+      shift: currentShift,
+      category: currentCategory,
+      table_number: parseInt(currentTable, 10),
+      duration_minutes: parseInt(currentDuration, 10),
+      price_omr: price,
+      is_advance_booking: isAdvance,
+      scheduled_for: scheduledFor,
+      arrival_window_start: arrivalWindowStart,
+      arrival_window_end: arrivalWindowEnd,
+      language: currentLang,
+      status: 'pending'
+    });
+
+  if (insertError) {
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = originalBtnText;
+    alert('Could not save your booking. Please check your connection and try again.');
+    console.error(insertError);
+    return;
+  }
+
+  const bookingRow = { id: newBookingId };
+
+  showWaitingState();
+
+  // ---- Listen live for staff approving or rejecting this exact booking ----
+  sb.channel(`booking-${bookingRow.id}`)
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'bookings', filter: `id=eq.${bookingRow.id}`
+    }, (payload) => {
+      const updated = payload.new;
+      if (updated.status === 'confirmed') showApprovedState(bookingRow, price, name);
+      else if (updated.status === 'cancelled') showRejectedState();
+    })
+    .subscribe();
+
+  document.getElementById('booking-form').style.display = 'none';
+  document.getElementById('confirm-card').classList.add('show');
+}
+
+function showWaitingState() {
+  const t = I18N[currentLang];
+  const catKey = CATEGORY_LABEL_KEY[currentCategory];
+  const catLabel = catKey ? t[catKey].replace(/\s*\(.*\)$/, '') : '';
+  const tableLabel = tableOptionLabel(currentCategory, currentTable);
+  document.getElementById('waiting-sub-text').innerHTML = t.waitingSubTemplate
+    .replace('{table}', tableLabel)
+    .replace('{category}', catLabel);
+  document.getElementById('waiting-state').style.display = 'block';
+  document.getElementById('approved-state').style.display = 'none';
+  document.getElementById('rejected-state').style.display = 'none';
+}
+
+function showApprovedState(bookingRow, price, name) {
+  const t = I18N[currentLang];
+  const catKey = CATEGORY_LABEL_KEY[currentCategory];
+  const catLabel = catKey ? t[catKey].replace(/\s*\(.*\)$/, '') : '';
+  const tableLabel = tableOptionLabel(currentCategory, currentTable);
+
+  const sub = t.confirmSubTemplate
+    .replace('{table}', tableLabel)
+    .replace('{category}', catLabel)
+    .replace('{duration}', currentDuration)
+    .replace('{total}', price.toFixed(3));
+  document.getElementById('confirm-sub-text').innerHTML = sub;
+
+  const waMessage = t.whatsappMessageTemplate
+    .replace('{name}', name)
+    .replace('{table}', tableLabel)
+    .replace('{category}', catLabel)
+    .replace('{duration}', currentDuration)
+    .replace('{total}', price.toFixed(3));
+  const waLink = 'https://wa.me/96897312049?text=' + encodeURIComponent(waMessage);
+  document.getElementById('whatsapp-confirm-btn').href = waLink;
+
+  document.getElementById('whatsapp-confirm-btn').addEventListener('click', () => {
+    sb.from('bookings').update({ whatsapp_sent: true }).eq('id', bookingRow.id);
+  }, { once: true });
+
+  document.getElementById('waiting-state').style.display = 'none';
+  document.getElementById('approved-state').style.display = 'block';
+  document.getElementById('rejected-state').style.display = 'none';
+}
+
+function showRejectedState() {
+  const t = I18N[currentLang];
+  document.getElementById('rejected-sub-text').textContent = t.rejectedSubText;
+  document.getElementById('waiting-state').style.display = 'none';
+  document.getElementById('approved-state').style.display = 'none';
+  document.getElementById('rejected-state').style.display = 'block';
+}
+
+// ---- Initialize: read table/category hint from URL if a Book Now link carried one over ----
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const urlCategory = params.get('type');
+  if (urlCategory && PRICING[urlCategory]) {
+    document.getElementById('select-category').value = urlCategory;
+    currentCategory = urlCategory;
+    populateTableDropdown();
+  }
+  // Language carried over from the home page (?lang=) or remembered from last visit
+  let startLang = 'en';
+  try {
+    const l = params.get('lang') || localStorage.getItem('snookerLang');
+    if (l && I18N[l]) startLang = l;
+  } catch (e) {}
+  document.getElementById('lang-picker').value = startLang;
+  setLanguage(startLang); // also calls renderFixedShiftDisplay() via setLanguage
+
+  // Category now starts unlocked (Time Slot is fixed, no longer a step to complete).
+  // Table, Duration and contact fields still lock progressively as before.
+  document.getElementById('select-table').disabled = true;
+  document.getElementById('select-duration').disabled = true;
+  document.getElementById('input-name').disabled = true;
+  document.getElementById('input-phone').disabled = true;
+
+  // If arriving from the closed-hours banner's Advanced Booking link, switch to that mode
+  if (params.get('advance') === '1') {
+    setBookingType('advance');
+  } else {
+    renderFixedShiftDisplay();
+  }
+})();
+
+</script>
+
+<script>
+// ============================================================
+// Realistic snooker break animation for the "Getting approval" circle
+// Real physics: cue strike, ball-to-ball collisions, cushion bounces, friction
+// ============================================================
+(function () {
+  const canvas = document.getElementById('break-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const S = 70, C = 35;            // logical size and centre
+  const R = 2.45;                  // ball radius
+  const WALL = 31 - R;             // cushion limit for ball centres
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Size canvas for sharp rendering on phones
+  function fitCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const px = canvas.clientWidth || S;
+    canvas.width = Math.round(px * dpr);
+    canvas.height = Math.round(px * dpr);
+    ctx.setTransform(canvas.width / S, 0, 0, canvas.height / S, 0, 0);
+  }
+
+  // Felt texture, built once
+  const felt = document.createElement('canvas');
+  function buildFelt() {
+    const n = 280;
+    felt.width = n; felt.height = n;
+    const f = felt.getContext('2d');
+    const g = f.createRadialGradient(n * 0.45, n * 0.4, n * 0.05, n / 2, n / 2, n * 0.55);
+    g.addColorStop(0, '#1f8a4c');
+    g.addColorStop(0.6, '#137040');
+    g.addColorStop(1, '#083d22');
+    f.fillStyle = g; f.fillRect(0, 0, n, n);
+    const img = f.getImageData(0, 0, n, n);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const k = (Math.random() - 0.5) * 14;
+      img.data[i] += k; img.data[i + 1] += k; img.data[i + 2] += k;
+    }
+    f.putImageData(img, 0, 0);
+    // cushion shadow around the edge
+    const e = f.createRadialGradient(n / 2, n / 2, n * 0.38, n / 2, n / 2, n * 0.5);
+    e.addColorStop(0, 'rgba(0,0,0,0)');
+    e.addColorStop(1, 'rgba(0,0,0,0.55)');
+    f.fillStyle = e; f.fillRect(0, 0, n, n);
+  }
+
+  let balls = [], phase, t, holdT, fade, aimAngle, stickGap, stickAlpha;
+
+  function rack() {
+    balls = [];
+    const apexX = 40.5, gap = 2 * R * 1.005;
+    for (let row = 0; row < 5; row++) {
+      for (let j = 0; j <= row; j++) {
+        balls.push({
+          x: apexX + row * gap * 0.866,
+          y: C + (j - row / 2) * gap,
+          vx: 0, vy: 0, red: true
+        });
+      }
+    }
+    // cue ball
+    balls.push({ x: 15, y: C + (Math.random() - 0.5) * 3, vx: 0, vy: 0, red: false });
+    const cue = balls[balls.length - 1];
+    const aimY = C + (Math.random() - 0.5) * 1.6;   // tiny variation so every break looks different
+    aimAngle = Math.atan2(aimY - cue.y, apexX - cue.x);
+    phase = 'aim'; t = 0; holdT = 0; fade = 0; stickGap = 4; stickAlpha = 1;
+  }
+
+  function physics(dt) {
+    const steps = 6, h = dt / steps;
+    for (let s = 0; s < steps; s++) {
+      for (const b of balls) {
+        b.x += b.vx * h; b.y += b.vy * h;
+        const sp = Math.hypot(b.vx, b.vy);
+        if (sp > 0) {
+          const ns = Math.max(0, sp - (sp * 0.9 + 14) * h);   // cloth friction
+          b.vx *= ns / sp; b.vy *= ns / sp;
+        }
+        // cushion
+        const dx = b.x - C, dy = b.y - C, d = Math.hypot(dx, dy);
+        if (d > WALL) {
+          const nx = dx / d, ny = dy / d;
+          b.x = C + nx * WALL; b.y = C + ny * WALL;
+          const vn = b.vx * nx + b.vy * ny;
+          if (vn > 0) { b.vx -= 1.75 * vn * nx; b.vy -= 1.75 * vn * ny; }
+        }
+      }
+      // ball to ball
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const a = balls[i], b = balls[j];
+          const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+          if (d > 0 && d < 2 * R) {
+            const nx = dx / d, ny = dy / d, ov = (2 * R - d) / 2;
+            a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
+            const rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+            if (rel > 0) {
+              const imp = rel * 0.97;
+              a.vx -= imp * nx; a.vy -= imp * ny;
+              b.vx += imp * nx; b.vy += imp * ny;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function update(dt) {
+    t += dt;
+    const cue = balls[balls.length - 1];
+    if (phase === 'aim') {
+      // two practice strokes, then pull back and strike
+      if (t < 0.9) stickGap = 3 + 3 * (0.5 - 0.5 * Math.cos(2 * Math.PI * t / 0.45));
+      else if (t < 1.2) stickGap = 3 + 7 * ((t - 0.9) / 0.3);
+      else if (t < 1.28) stickGap = 10 - 10 * ((t - 1.2) / 0.08);
+      else {
+        stickGap = 0;
+        cue.vx = Math.cos(aimAngle) * 250;
+        cue.vy = Math.sin(aimAngle) * 250;
+        phase = 'roll'; t = 0;
+      }
+    } else if (phase === 'roll') {
+      stickGap = Math.min(4, t * 18);              // follow through, then back away
+      stickAlpha = Math.max(0, 1 - t / 0.45);
+      physics(dt);
+      const moving = balls.some(b => Math.hypot(b.vx, b.vy) > 2);
+      if (!moving) holdT += dt; else holdT = 0;
+      if (holdT > 0.7 || t > 4) { phase = 'fadeout'; t = 0; }
+    } else if (phase === 'fadeout') {
+      physics(dt);
+      fade = Math.min(1, t / 0.4);
+      if (fade >= 1) { rack(); phase = 'fadein'; fade = 1; stickAlpha = 0; }
+    } else if (phase === 'fadein') {
+      fade = Math.max(0, 1 - t / 0.35);
+      stickAlpha = 1 - fade;
+      if (fade <= 0) { phase = 'aim'; t = 0; }
+    }
+  }
+
+  function drawBall(b) {
+    // soft shadow (light from top left)
+    ctx.fillStyle = 'rgba(0,0,0,0.38)';
+    ctx.beginPath();
+    ctx.ellipse(b.x + 0.9, b.y + 1.1, R * 1.02, R * 0.9, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // shaded sphere
+    const g = ctx.createRadialGradient(b.x - R * 0.4, b.y - R * 0.45, R * 0.1, b.x, b.y, R * 1.05);
+    if (b.red) {
+      g.addColorStop(0, '#ff7a6b');
+      g.addColorStop(0.45, '#d11a22');
+      g.addColorStop(1, '#4a0006');
+    } else {
+      g.addColorStop(0, '#ffffff');
+      g.addColorStop(0.55, '#ece9dc');
+      g.addColorStop(1, '#8e8a7a');
+    }
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(b.x, b.y, R, 0, Math.PI * 2); ctx.fill();
+    // specular highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath(); ctx.arc(b.x - R * 0.38, b.y - R * 0.42, R * 0.26, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function drawStick() {
+    if (stickAlpha <= 0) return;
+    const cue = balls[balls.length - 1];
+    const dx = Math.cos(aimAngle), dy = Math.sin(aimAngle);
+    const tipX = cue.x - dx * (R + 0.4 + stickGap);
+    const tipY = cue.y - dy * (R + 0.4 + stickGap);
+    ctx.save();
+    ctx.globalAlpha = stickAlpha;
+    ctx.translate(tipX, tipY);
+    ctx.rotate(aimAngle);
+    // shadow of the cue on the cloth
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.beginPath();
+    ctx.moveTo(1, 1.4); ctx.lineTo(-60, 3.6); ctx.lineTo(-60, 5.6); ctx.lineTo(1, 2.6); ctx.fill();
+    // shaft (maple) tapering to butt
+    const sh = ctx.createLinearGradient(0, -1.6, 0, 1.6);
+    sh.addColorStop(0, '#f6dfb0');
+    sh.addColorStop(0.5, '#d9ab63');
+    sh.addColorStop(1, '#8a5a24');
+    ctx.fillStyle = sh;
+    ctx.beginPath();
+    ctx.moveTo(-1.2, -0.75); ctx.lineTo(-38, -1.3); ctx.lineTo(-38, 1.3); ctx.lineTo(-1.2, 0.75); ctx.fill();
+    // butt (dark ebony)
+    const bt = ctx.createLinearGradient(0, -1.6, 0, 1.6);
+    bt.addColorStop(0, '#5a3a22');
+    bt.addColorStop(0.5, '#2a160a');
+    bt.addColorStop(1, '#0d0603');
+    ctx.fillStyle = bt;
+    ctx.beginPath();
+    ctx.moveTo(-38, -1.3); ctx.lineTo(-62, -1.7); ctx.lineTo(-62, 1.7); ctx.lineTo(-38, 1.3); ctx.fill();
+    // brass joint ring
+    ctx.fillStyle = '#c9a44a';
+    ctx.fillRect(-39, -1.35, 1, 2.7);
+    // ferrule and chalked tip
+    ctx.fillStyle = '#f3efe4';
+    ctx.fillRect(-1.3, -0.75, 1.1, 1.5);
+    ctx.fillStyle = '#3f79c4';
+    ctx.fillRect(-0.3, -0.7, 0.55, 1.4);
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, S, S);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(C, C, 35, 0, Math.PI * 2); ctx.clip();
+    ctx.drawImage(felt, 0, 0, S, S);
+    ctx.globalAlpha = 1 - fade;
+    for (const b of balls) drawBall(b);
+    ctx.globalAlpha = 1;
+    drawStick();
+    ctx.restore();
+  }
+
+  let last = 0;
+  function loop(now) {
+    const dt = Math.min(0.033, (now - last) / 1000 || 0);
+    last = now;
+    if (canvas.offsetParent !== null) {   // only work while the waiting screen is visible
+      if (canvas.width === 0 || Math.abs(canvas.width - canvas.clientWidth * Math.min(window.devicePixelRatio || 1, 3)) > 1) fitCanvas();
+      if (!reduceMotion) update(dt);
+      draw();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  buildFelt();
+  fitCanvas();
+  rack();
+  requestAnimationFrame(loop);
+})();
+</script>
+
+<div style="text-align:center;font-family:'Manrope',sans-serif;font-size:12px;color:#C98CB0;padding:22px 16px 28px;">
+  By booking, you agree to our <a href="policies.html" style="color:#CCFF00;">Club policies</a> and <a href="policies.html#privacy" style="color:#CCFF00;">Privacy</a> notice.<br>&copy; 2026 Velvet Cue Lounge &middot; Powered by KS Tech LLC
+</div>
+</body>
+</html>
