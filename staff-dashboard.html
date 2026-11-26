@@ -1491,6 +1491,9 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // real username/password. The database itself still needs locking with Supabase Auth. ---
 const STAFF_USER_HASH = '2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5cbb9c00aa5aea';
 const STAFF_PASS_HASH = 'a9ec415613e48c70d0141a00d9d4ee0384f8282451a691a16fb6c8e9b12e5405';
+// Administrator account (not shown on screen). Logging in as admin also unlocks Settings.
+const ADMIN_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+const ADMIN_PASS_HASH = '7676aaafb027c825bd9abab78b234070e702752f625b752e55e55b48e607e358';
 let loginFails = 0;
 async function loginSha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -1505,10 +1508,12 @@ async function attemptLogin() {
     err.classList.add('show');
     return;
   }
-  const userOk = (await loginSha256(u.value.trim().toLowerCase())) === STAFF_USER_HASH;
-  const passOk = (await loginSha256(p.value)) === STAFF_PASS_HASH;
+  const uHash = await loginSha256(u.value.trim().toLowerCase());
+  const pHash = await loginSha256(p.value);
+  const isAdmin = uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH;
+  const isStaff = uHash === STAFF_USER_HASH && pHash === STAFF_PASS_HASH;
   p.value = '';
-  if (!userOk || !passOk) {
+  if (!isAdmin && !isStaff) {
     loginFails++;
     err.textContent = 'Incorrect username or password.';
     err.classList.add('show');
@@ -1519,6 +1524,7 @@ async function attemptLogin() {
   document.getElementById('login-gate').style.display = 'none';
   document.getElementById('dash-content').style.display = 'block';
   sessionStorage.setItem('staffLoggedIn', 'yes');
+  if (isAdmin) { try { sessionStorage.setItem('settingsUnlocked', 'yes'); } catch (e) {} }
   initDashboard();
 }
 function logoutDashboard() {
